@@ -3,7 +3,7 @@ rm(list=ls())
 library(nimble)
 
 memory.limit(size=1E10)
-setwd("~/GitHub/MCMSZIP_models/final_code_cleaned")
+setwd("~/GitHub/ZS_CMSP_code")
 
 #bring in cleaned data
 load("final_data_cleaned.Rdata")
@@ -245,8 +245,6 @@ end_time <- Sys.time()
 end_time - start_time
 
 run_time <- end_time-start_time
-
-save(samples,file="C:/Users/dirkd/OneDrive/Documents/Bios_693/final_project/Multimove_sample/denguee_model/paper drafts/Draft_more_applied/results/results_model7_test_release_bFFBS2.RData")
 
 #check convergence
 library(coda)
