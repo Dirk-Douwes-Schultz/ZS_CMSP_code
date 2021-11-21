@@ -1,4 +1,4 @@
-#final model with binary (one at a time) sampler for the hidden states
+#ZSCMSP model from Table 1 with binary (one at a time) sampler for the hidden states
 rm(list=ls())
 library(nimble)
 
@@ -206,9 +206,6 @@ Pw     <- sum(apply(log(like+.000001),2,var),na.rm = TRUE)
 WAIC   <- -2*sum(log(fbar),na.rm = TRUE)+2*Pw
 remove(like)
 remove(fbar)
-
-
-
 
 
 

@@ -1,4 +1,4 @@
-#final model with iFFBS sampler for the hidden states
+# ZSCMSP model from Table 1 with bFFBS2 sampler for the hidden states
 rm(list=ls())
 library(nimble)
 
@@ -136,20 +136,80 @@ source("samplers.R")
 
 dengeeConf <- configureMCMC(dengeemodel, print = TRUE)
 
-#add iFFBS sampler, this might not work in new versions of nimble
-for(loc in 1:160){
-  
-  
-  dq <- !dengeemodel$isData(paste0("S[",loc,", ]"))
-  if(sum(dq)>0){
-    dengeeConf$removeSampler(paste0("S[",loc,", dq]"))
-    dengeeConf$addSampler(target = dengeemodel$expandNodeNames(paste0("S[",loc,", dq]")),
-                          type = "iZIPFFBS4")
+
+#need to create a list of blocks
+
+#first find locations with all positive values that dont need to be blocked
+g0 <- NULL
+for(i in 1:160){
+  if(sum(as.numeric(cases[i,]>0))==84){
+    g0 <- c(g0,i)
   }
-  
 }
 
+
+#block neighbors together
+nei_block <- min(which(N_matrix[1,]==1))
+block_list <- list(c(1,nei_block))
+
+for(i in 2:160){
+  if(!i %in% unlist(block_list)& !i %in% g0){
+    for(j in which(N_matrix[i,]==1)){
+      if(!j %in% unlist(block_list)& !j %in% g0){
+        block_list <- append(block_list,list(c(i,j)))
+        break
+      }
+    }
+  }
+}
+
+#this procedure leaves some areas without neighbors to block
+#we put them in single location blocks
+for(i in 1:160){
+  if(!i %in% unlist(block_list)& !i %in% g0){
+    block_list <- append(block_list,list(c(i)))
+  }
+}
+
+#checks, should be 157, 71 2 loc blocks, 
+#15 locs sampled in one block and 
+#3 locs do not need to be sampled as all >0
+length(unique(unlist(block_list)))
+
+
+#add bFFBS2 sampler to 2 location blocks
+#assign iFFBS sampler to 1 location blocks
+#this may not work in newer versions of Nimble
+for(i in 1:length(block_list)){
+  block <- block_list[[i]]
+  if(length(block)==2){
+    loc1 <- block[1]
+    loc2 <- block[2]
+    dq1 <- !dengeemodel$isData(paste0("S[",loc1,", ]"))
+    dq2 <- !dengeemodel$isData(paste0("S[",loc2,", ]"))
+    if(sum(dq1)>0 & sum(dq2)>0){
+      dengeeConf$removeSampler(c(paste0("S[",loc1,", dq1]"),paste0("S[",loc2,", dq2]")))
+      dengeeConf$addSampler(target = dengeemodel$expandNodeNames(c(paste0("S[",loc1,", dq1]"),paste0("S[",loc2,", dq2]"))),
+                            type = "bZIPFFBS2")
+    }else{
+      print("error: you have a empty loc block")
+    }
+  }else{
+    loc <- block[1]
+    dq <- !dengeemodel$isData(paste0("S[",loc,", ]"))
+    if(sum(dq)>0){
+      dengeeConf$removeSampler(paste0("S[",loc,", dq]"))
+      dengeeConf$addSampler(target = dengeemodel$expandNodeNames(paste0("S[",loc,", dq]")),
+                            type = "iZIPFFBS4")
+    }else{
+      print("error: you have a empty loc block")
+    }
+  }
+}
+
+#check to make sure samplers were added correctly
 dengeeConf
+
 
 #try a RW block sampler
 dengeeConf$removeSampler(c("alpha[1]","alpha[6]","alpha[7]","alpha[12]"))
@@ -223,6 +283,13 @@ Pw     <- sum(apply(log(like+.000001),2,var),na.rm = TRUE)
 WAIC   <- -2*sum(log(fbar),na.rm = TRUE)+2*Pw
 remove(like)
 remove(fbar)
+
+
+
+
+
+
+
 
 
 

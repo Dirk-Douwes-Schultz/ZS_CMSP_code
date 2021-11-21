@@ -1,4 +1,4 @@
-Code for "A zero-state coupled Markov switching Poisson model for spatio-temporal infectious disease counts"
+Code for "Zero-state Coupled Markov Switching Count Models for Spatio-temporal Infectious Disease Spread"
 see paper for more details
 
 R version 3.6.3
@@ -8,13 +8,27 @@ some code may not work on newer versions of Nimble
 
 "final_data_cleaned.Rdata" - cleaned data
 
-"samplers.R" - contains code for the custom iFFBS and bFFBS2 samplers
+"coupled_NB_samplers.R" - contains code for the custom iFFBS and bFFBS2 samplers for the ZS-CMSNB models
 
-"final_model_binary.R" - fits final model with binary (one at a time) samplers for the hidden states
+"endemic_epidemic.R" - fits the endemic/epidemic model from Table 1
 
-"final_model_iFFBS.R" - fits final model with iFFBS samplers for the hidden states
+"ZINB.R" - fits the ZINB model from Table 1
 
-"final_model_bFFBS2.R" - fits final model with bFFBS2 samplers for the hidden states
+"ZINBRE.R" - fits the ZINBRE model from Table 1
+
+"ZS_CMSNB_binary.R" - fits the bolded ZS-CMSNB model from Table 1 with one-at-a-time samplers for the hidden states
+
+"ZS_CMSNB_iFFBS.R" - fits the bolded ZS-CMSNB model from Table 1 with iFFBS samplers for the hidden states
+
+"ZS_CMSNB_bFFBS.R" - fits the bolded ZS-CMSNB model from Table 1 with bFFBS2 samplers for the hidden states
+
+"samplers.R" - contains code for the custom iFFBS and bFFBS2 samplers for the ZS-CMSP models
+
+"ZS_CMSP_binary.R" - fits the ZS-CMSP model from Table 1 with one-at-a-time samplers for the hidden states
+
+"ZS_CMSP_iFFBS.R" - fits the ZS-CMSP model from Table 1 with iFFBS samplers for the hidden states
+
+"ZS_CMSP_bFFBS.R" - fits the ZS-CMSP model from Table 1 with bFFBS2 samplers for the hidden states
 
 
 
